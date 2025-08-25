@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import heroBackground from "@/assets/hero-background.jpg";
 
 const AssessmentLanding = () => {
-  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     fullName: "",
     company: "",
@@ -71,7 +71,7 @@ const AssessmentLanding = () => {
     
     // Simulate loading for UX
     setTimeout(() => {
-      navigate('/assessment/step/1');
+      window.location.href = '/assessment/step/1';
     }, 1500);
   };
 
