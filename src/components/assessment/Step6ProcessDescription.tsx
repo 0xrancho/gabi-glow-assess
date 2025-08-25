@@ -18,15 +18,15 @@ const Step6ProcessDescription = ({ data, updateData, onNext }: Props) => {
     updateData({ processDescription: value });
     
     const wordCount = value.trim().split(/\s+/).filter(word => word.length > 0).length;
-    if (error && wordCount >= 100) {
+    if (error && wordCount >= 50) {
       setError("");
     }
   };
 
   const handleNext = () => {
     const wordCount = processDescription.trim().split(/\s+/).filter(word => word.length > 0).length;
-    if (wordCount < 100) {
-      setError("Please provide at least 100 words");
+    if (wordCount < 50) {
+      setError("Please provide at least 50 words");
       return;
     }
     onNext();
@@ -73,8 +73,8 @@ const Step6ProcessDescription = ({ data, updateData, onNext }: Props) => {
             <p>Describe each step in your current process</p>
           </div>
           <div className="text-right">
-            <p className={`${wordCount >= 100 ? 'text-success' : 'text-text-muted'}`}>
-              {wordCount} words (minimum 100)
+            <p className={`${wordCount >= 50 ? 'text-success' : 'text-text-muted'}`}>
+              {wordCount} words (minimum 50)
             </p>
           </div>
         </div>
@@ -87,7 +87,7 @@ const Step6ProcessDescription = ({ data, updateData, onNext }: Props) => {
       <div className="flex justify-end">
         <Button
           onClick={handleNext}
-          disabled={wordCount < 100}
+          disabled={wordCount < 50}
           className="btn-gabi px-8"
         >
           Continue

@@ -36,9 +36,18 @@ const loadingMessages = [
   }
 ];
 
+const confidenceMessages = [
+  "Processing business context data...",
+  "Cross-referencing industry patterns...",
+  "Calculating AI implementation complexity...",
+  "Synthesizing strategic recommendations...",
+  "Validating feasibility assessments..."
+];
+
 const Step10Generation = ({ data, updateData }: Props) => {
   const navigate = useNavigate();
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [currentConfidenceIndex, setCurrentConfidenceIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -50,6 +59,7 @@ const Step10Generation = ({ data, updateData }: Props) => {
 
     let messageTimer: NodeJS.Timeout;
     let progressTimer: NodeJS.Timeout;
+    let confidenceTimer: NodeJS.Timeout;
 
     const showNextMessage = () => {
       if (currentMessageIndex < loadingMessages.length - 1) {
@@ -81,9 +91,15 @@ const Step10Generation = ({ data, updateData }: Props) => {
       });
     }, progressInterval);
 
+    // Cycle through confidence messages
+    confidenceTimer = setInterval(() => {
+      setCurrentConfidenceIndex(prev => (prev + 1) % confidenceMessages.length);
+    }, 2000);
+
     return () => {
       clearTimeout(messageTimer);
       clearInterval(progressTimer);
+      clearInterval(confidenceTimer);
     };
   }, [currentMessageIndex, navigate, updateData]);
 
@@ -145,8 +161,8 @@ const Step10Generation = ({ data, updateData }: Props) => {
         <div className="bg-interactive-bg/30 border border-interactive-border rounded-lg p-4">
           <div className="flex items-center justify-center gap-2 text-success">
             <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
-            <p className="text-sm font-medium">
-              High confidence analysis based on {Object.keys(data).length - 3} data points
+            <p className="text-sm font-medium animate-fade-in">
+              {confidenceMessages[currentConfidenceIndex]}
             </p>
           </div>
         </div>
