@@ -74,27 +74,16 @@ const AssessmentLanding = () => {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Subtle geometric background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-32 h-32 border border-border/20 rounded-full" />
-        <div className="absolute top-40 right-40 w-16 h-16 border border-user-accent/30 rotate-45" />
-        <div className="absolute bottom-32 left-1/3 w-24 h-24 border border-border/10 rounded-full" />
-        <div className="absolute bottom-20 right-20 w-20 h-20 border border-user-accent/20 rotate-12" />
-      </div>
-
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="w-full max-w-4xl mx-auto">
           <div className="text-center mb-16">
             {/* Professional Header */}
             <div className="mb-8">
-              <h1 className="text-6xl font-bold text-text-primary mb-4">
-                Joel A. Austin
-              </h1>
-              <div className="flex items-center justify-center gap-2 mb-6">
-                <Brain className="w-6 h-6 text-user-accent" />
-                <h2 className="text-2xl font-medium text-text-primary">
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <Brain className="w-8 h-8 text-gabi-pink" />
+                <h1 className="text-5xl font-bold text-text-primary">
                   AI Readiness Assessment
-                </h2>
+                </h1>
               </div>
               <p className="text-lg text-text-secondary">
                 Powered by GABI Intelligence
@@ -113,15 +102,15 @@ const AssessmentLanding = () => {
             {/* Professional trust indicators */}
             <div className="flex flex-wrap justify-center gap-8 mb-12">
               <div className="flex items-center gap-2 text-text-secondary">
-                <Shield className="w-5 h-5 text-user-accent" />
+                <Shield className="w-5 h-5 text-gabi-pink" />
                 <span>Confidential Assessment</span>
               </div>
               <div className="flex items-center gap-2 text-text-secondary">
-                <Activity className="w-5 h-5 text-user-accent" />
+                <Activity className="w-5 h-5 text-gabi-pink" />
                 <span>Structured Methodology</span>
               </div>
               <div className="flex items-center gap-2 text-text-secondary">
-                <CheckCircle className="w-5 h-5 text-user-accent" />
+                <CheckCircle className="w-5 h-5 text-gabi-pink" />
                 <span>Professional Analysis</span>
               </div>
             </div>
@@ -140,7 +129,7 @@ const AssessmentLanding = () => {
                     id="fullName"
                     value={formData.fullName}
                     onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    className="bg-input border-border/50 focus:border-user-accent focus:ring-1 focus:ring-user-accent/20 transition-colors"
+                    className="bg-input border-border/50 focus:border-gabi-pink focus:ring-1 focus:ring-gabi-pink/20 transition-colors"
                     placeholder="Enter your full name"
                   />
                   {errors.fullName && (
@@ -157,7 +146,7 @@ const AssessmentLanding = () => {
                     id="company"
                     value={formData.company}
                     onChange={(e) => handleInputChange('company', e.target.value)}
-                    className="bg-input border-border/50 focus:border-user-accent focus:ring-1 focus:ring-user-accent/20 transition-colors"
+                    className="bg-input border-border/50 focus:border-gabi-pink focus:ring-1 focus:ring-gabi-pink/20 transition-colors"
                     placeholder="Enter your company name"
                   />
                   {errors.company && (
@@ -175,7 +164,7 @@ const AssessmentLanding = () => {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className="bg-input border-border/50 focus:border-user-accent focus:ring-1 focus:ring-user-accent/20 transition-colors"
+                    className="bg-input border-border/50 focus:border-gabi-pink focus:ring-1 focus:ring-gabi-pink/20 transition-colors"
                     placeholder="your.email@company.com"
                   />
                   {errors.email && (
@@ -191,7 +180,7 @@ const AssessmentLanding = () => {
                     onCheckedChange={(checked) => 
                       handleInputChange('subscribeUpdates', checked === true)
                     }
-                    className="border-border/50 data-[state=checked]:bg-user-accent data-[state=checked]:border-user-accent"
+                    className="border-border/50 data-[state=checked]:bg-gabi-pink data-[state=checked]:border-gabi-pink"
                   />
                   <Label htmlFor="subscribe" className="text-text-secondary text-sm leading-relaxed">
                     Subscribe to strategic AI insights and updates
@@ -202,7 +191,7 @@ const AssessmentLanding = () => {
                 <Button
                   type="submit"
                   disabled={!isFormValid || isLoading}
-                  className={`w-full text-lg py-6 bg-user-accent hover:bg-user-accent/90 text-white font-medium transition-all duration-200 ${
+                  className={`w-full text-lg py-6 gabi-gradient hover:opacity-90 text-white font-medium transition-all duration-200 ${
                     !isFormValid ? 'opacity-50 cursor-not-allowed' : ''
                   } ${isLoading ? 'opacity-75' : ''}`}
                 >
