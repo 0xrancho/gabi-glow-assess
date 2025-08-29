@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Brain, CheckCircle, Shield, Activity } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import { saveAssessment, trackAnalyticsEvent, type AssessmentRecord } from "@/lib/supabase";
 
 const AssessmentLanding = () => {
   
@@ -39,28 +40,70 @@ const AssessmentLanding = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
 
     setIsLoading(true);
     
-    // Generate session ID and store initial data
-    const sessionId = uuidv4();
-    const assessmentData = {
-      sessionId,
-      ...formData,
-      startedAt: new Date().toISOString(),
-    };
+    try {
+      // Generate session ID and create assessment record
+      const sessionId = uuidv4();
+      const assessmentRecord: AssessmentRecord = {
+        session_id: sessionId,
+        email: formData.email,
+        company: formData.company,
+        full_name: formData.fullName,
+        subscribe_updates: formData.subscribeUpdates,
+        status: 'in_progress',
+        current_step: 1,
+        started_at: new Date().toISOString(),
+      };
 
-    // Store in localStorage for session persistence
-    localStorage.setItem('assessment_session', JSON.stringify(assessmentData));
-    
-    // Simulate loading for UX
-    setTimeout(() => {
-      window.location.href = '/assessment/step/1';
-    }, 1500);
+      // Save to Supabase (with localStorage fallback)
+      await saveAssessment(assessmentRecord);
+
+      // Track analytics event
+      await trackAnalyticsEvent({
+        session_id: sessionId,
+        event_type: 'assessment_started',
+        event_data: {
+          company: formData.company,
+          business_email: formData.email,
+          source: 'landing_page'
+        }
+      });
+
+      // Store in localStorage for session persistence (keeping existing behavior)
+      const localData = {
+        sessionId,
+        ...formData,
+        startedAt: new Date().toISOString(),
+      };
+      localStorage.setItem('assessment_session', JSON.stringify(localData));
+      
+      // Navigate to first step
+      setTimeout(() => {
+        window.location.href = '/assessment/step/1';
+      }, 1500);
+
+    } catch (error) {
+      console.error('Failed to start assessment:', error);
+      
+      // Fallback: continue with localStorage only
+      const sessionId = uuidv4();
+      const localData = {
+        sessionId,
+        ...formData,
+        startedAt: new Date().toISOString(),
+      };
+      localStorage.setItem('assessment_session', JSON.stringify(localData));
+      
+      setTimeout(() => {
+        window.location.href = '/assessment/step/1';
+      }, 1500);
+    }
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {

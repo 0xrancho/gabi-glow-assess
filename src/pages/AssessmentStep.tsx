@@ -4,6 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import { 
+  saveAssessment, 
+  savePartialStep, 
+  trackAnalyticsEvent, 
+  type AssessmentRecord 
+} from "@/lib/supabase";
 import Step1BusinessType from "@/components/assessment/Step1BusinessType";
 import Step2OpportunityFocus from "@/components/assessment/Step2OpportunityFocus";
 import Step3RevenueModel from "@/components/assessment/Step3RevenueModel";
@@ -13,7 +19,7 @@ import Step6ProcessDescription from "@/components/assessment/Step6ProcessDescrip
 import Step7TechStack from "@/components/assessment/Step7TechStack";
 import Step8InvestmentLevel from "@/components/assessment/Step8InvestmentLevel";
 import Step9AdditionalContext from "@/components/assessment/Step9AdditionalContext";
-import Step10Generation from "@/components/assessment/Step10Generation";
+import DeepReportGeneration from "@/components/assessment/DeepReportGeneration";
 
 interface AssessmentData {
   sessionId: string;
@@ -63,14 +69,66 @@ const AssessmentStep = () => {
     setIsLoading(false);
   }, [navigate]);
 
-  const updateAssessmentData = (updates: Partial<AssessmentData>) => {
+  const updateAssessmentData = async (updates: Partial<AssessmentData>) => {
     if (!assessmentData) return;
 
     const updatedData = { ...assessmentData, ...updates };
     setAssessmentData(updatedData);
     
-    // Save to localStorage
+    // Save to localStorage (preserve existing behavior)
     localStorage.setItem('assessment_session', JSON.stringify(updatedData));
+
+    // Save progress to Supabase
+    try {
+      // Convert to AssessmentRecord format
+      const assessmentRecord: AssessmentRecord = {
+        session_id: assessmentData.sessionId,
+        email: assessmentData.email,
+        company: assessmentData.company,
+        full_name: assessmentData.fullName,
+        subscribe_updates: assessmentData.subscribeUpdates,
+        business_type: updatedData.businessType,
+        opportunity_focus: updatedData.opportunityFocus,
+        revenue_model: updatedData.revenueModel,
+        challenges: updatedData.challenges,
+        metrics: updatedData.metrics,
+        metrics_quantified: updatedData.metricsQuantified,
+        team_description: updatedData.teamDescription,
+        process_description: updatedData.processDescription,
+        tech_stack: updatedData.techStack,
+        investment_level: updatedData.investmentLevel,
+        additional_context: updatedData.additionalContext,
+        status: 'in_progress',
+        current_step: currentStep,
+        updated_at: new Date().toISOString()
+      };
+
+      // Update assessment in Supabase
+      await saveAssessment(assessmentRecord);
+
+      // Save partial step data for abandonment tracking
+      await savePartialStep({
+        session_id: assessmentData.sessionId,
+        step_number: currentStep,
+        step_data: updates
+      });
+
+      // Track step completion analytics
+      await trackAnalyticsEvent({
+        session_id: assessmentData.sessionId,
+        event_type: 'step_updated',
+        event_data: {
+          step: currentStep,
+          fields_updated: Object.keys(updates),
+          company: assessmentData.company
+        },
+        step_number: currentStep
+      });
+
+    } catch (error) {
+      console.error('Failed to save assessment progress:', error);
+      // Continue with localStorage-only behavior on failure
+    }
   };
 
   const handleNext = () => {
@@ -118,7 +176,8 @@ const AssessmentStep = () => {
       case 9:
         return <Step9AdditionalContext {...commonProps} />;
       case 10:
-        return <Step10Generation {...commonProps} />;
+        console.log('🎯 Step 10: Rendering DeepReportGeneration component');
+        return <DeepReportGeneration {...commonProps} />;
       default:
         return <div>Step not found</div>;
     }
